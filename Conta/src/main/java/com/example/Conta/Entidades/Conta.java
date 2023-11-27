@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 
 @Entity
 public class Conta {
+    private String email;
     private final String agencia = "1000";
 
     private final String digitoConta = "010";
@@ -25,21 +26,21 @@ public class Conta {
     public void setLogado(Enum logado) {
         this.logado = logado;
     }
-
-    public int getNumConta() {
-        return numConta;
-    }
-
-    public void setNumConta(int numConta) {
-        this.numConta = numConta;
-    }
-
     public String getCpf() {
         return cpf;
     }
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Double getValor() {

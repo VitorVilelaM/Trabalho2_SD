@@ -6,6 +6,15 @@ public class Transacao {
 
     private String valor;
 
+    @Override
+    public String toString() {
+        return "Pagamento," +
+                "pagador='" + pagador + '\'' +
+                ", receptor='" + receptor + '\'' +
+                ", valor='" + valor + '\'' +
+                '}';
+    }
+
     public String getPagador() {
         return pagador;
     }

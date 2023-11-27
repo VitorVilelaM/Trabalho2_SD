@@ -9,6 +9,14 @@ public class Login {
     private String email;
     private String senha;
 
+    @Override
+    public String toString() {
+        return "{" +
+                "email='" + email + '\'' +
+                ", senha='" + senha + '\'' +
+                '}';
+    }
+
     public String getEmail() {
         return email;
     }

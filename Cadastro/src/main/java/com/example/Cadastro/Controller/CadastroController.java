@@ -21,6 +21,9 @@ public class CadastroController {
     @PostMapping
     public void salvar(@RequestBody Cadastro cadastro){
         repositorio.save(cadastro);
-        sendService.sendUser(cadastro.toString());
+
+        sendService.sendUserConta(cadastro.toString());
+        sendService.sendUserLogin(cadastro.toString());
+        sendService.sendUserEmail(cadastro.toString());
     }
 }

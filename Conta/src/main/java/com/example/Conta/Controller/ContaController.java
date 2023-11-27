@@ -2,7 +2,9 @@ package com.example.Conta.Controller;
 
 import com.example.Conta.Database.RepositorioConta;
 import com.example.Conta.Entidades.Conta;
+import com.example.Conta.Entidades.Deposito;
 import com.example.Conta.Entidades.Transacao;
+import com.example.Conta.Services.ContaEmails;
 import com.example.Conta.Services.ContaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +18,10 @@ public class ContaController {
     private RepositorioConta repositorio;
 
     @Autowired
-    private ContaService contaService;
+    private ContaEmails email;
+
+    ContaService contaService = new ContaService();
+
     @GetMapping("/conta/{cpf}")
     public String verSaldo(@PathVariable String cpf){
 
@@ -35,25 +40,25 @@ public class ContaController {
 
         List<Conta> contas = repositorio.findAll();
 
-        String receptor = "", pagador = "";
+        Conta receptor = null, pagador = null;
 
         for(Conta count : contas){
             if(count.getCpf().equals(transacao.getPagador())){
-                pagador = transacao.getPagador();
+                pagador = count;
             }
         }
 
-        if(transacao.getPagador().isEmpty()){
+        if(pagador != null && pagador.getCpf().isEmpty()){
             return "Não existe a conta de pagador!";
         }
 
         for(Conta count : contas){
             if(count.getCpf().equals(transacao.getReceptor())){
-                receptor = transacao.getPagador();
+                receptor = count;
             }
         }
 
-        if(transacao.getReceptor().isEmpty()){
+        if(receptor.getCpf().isEmpty()){
             return "Não existe a conta de receptor!";
         }
 
@@ -61,10 +66,43 @@ public class ContaController {
             return "Valor da transacao nao informado!";
         }
 
-        contaService.mandaPagamento(transacao, contas);
-        return "";
+        String pagamento = contaService.mandaPagamento(transacao, contas,repositorio);
+
+        if(pagamento.isEmpty()){
+            return "Você não está logado!";
+        }else if(pagamento.equals("valor_insuficiente")){
+            return "Você não possui valor suficiente para essa transação!";
+        }else if(pagamento.equals("valor_zero")){
+            return "Impossivel fazer transação de nenhum valor!";
+        }else if(pagamento.equals("iguais")){
+            return "Você esta tentando pagar você mesmo?";
+        }
+
+        email.sendEmail(transacao.toString() +","+ receptor.getEmail());
+
+        return "Pagamento feito com sucesso!";
 
     }
 
+    @PostMapping("/depositar")
+    public String pagar(@RequestBody Deposito deposito){
+        List<Conta> contas = repositorio.findAll();
+
+        String destino = "";
+
+        for(Conta count : contas){
+            if(count.getCpf().equals(deposito.getDestino())){
+                destino = deposito.getDestino();
+            }
+        }
+
+        if(destino.isEmpty()){
+            return "Nao existe conta a esse CPF";
+        }
+
+        contaService.deposita(deposito, contas, repositorio);
+
+        return "Deposito feito com sucesso!";
+    }
 
 }

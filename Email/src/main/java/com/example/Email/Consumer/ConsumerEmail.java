@@ -12,8 +12,8 @@ public class ConsumerEmail {
     public ConsumerEmail(EmailService emailService){
         this.emailService = emailService;
     }
-    @JmsListener(destination = "cadastro")
-    public void listener(String cadastro){
+    @JmsListener(destination = "cadastroEmail")
+    public void listenerCadastro(String cadastro){
         String[] data = cadastro.split(",");
 
         String nome = data[1].replace("nome=","");
@@ -31,4 +31,25 @@ public class ConsumerEmail {
 
         emailService.sendEmail(emailModel);
     }
+
+    @JmsListener(destination = "operacaoEmail")
+    public void listenerEmail(String operacao){
+
+        String[] data = operacao.split(",");
+        String subject = data[0];
+        String valor = data[3].replace("'}", "");
+        valor = valor.replace("'", "");
+        valor = valor.replace("valor=", "");
+        String emailTO = data[4];
+
+
+        EmailModel emailModel = new EmailModel();
+
+        emailModel.setEmailTO(emailTO);
+        emailModel.setSubject(subject + " recebido com sucesso!");
+        emailModel.setText("Você acabou de receber um pagamento, no valor de R$" + valor);
+
+        emailService.sendEmail(emailModel);
+    }
+
 }

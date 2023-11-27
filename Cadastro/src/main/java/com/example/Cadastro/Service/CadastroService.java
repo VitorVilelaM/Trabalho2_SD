@@ -12,7 +12,16 @@ public class CadastroService {
         this.jmsTemplate = jmsTemplate;
     }
 
-    public void sendUser(String user){
-        jmsTemplate.convertAndSend("cadastro",user);
+    public void sendUserLogin(String user){
+        jmsTemplate.convertAndSend("cadastroLogin",user);
+    }
+
+    public void sendUserConta(String user){
+        jmsTemplate.convertAndSend("cadastroConta",user);
+    }
+
+    public void sendUserEmail(String user){
+        jmsTemplate.convertAndSend("cadastroEmail", user);
     }
 }
+

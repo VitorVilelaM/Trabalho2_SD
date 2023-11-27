@@ -13,16 +13,20 @@ public class ConsumerCadastro {
     @Autowired
     private RepositorioConta repositorio;
 
-    @JmsListener(destination = "cadastro")
+    @JmsListener(destination = "cadastroConta")
     public void listener(String cadastro){
         Conta conta = new Conta();
 
         String[] data = cadastro.split(",");
 
-        String cpf = data[1].replace(" cpf=","");
+        String cpf = data[2].replace(" cpf=","");
         cpf = cpf.replace("'", "");
 
+        String email = data[3].replace(" email=", "");
+        email = email.replace("'", "");
+
         conta.setCpf(cpf);
+        conta.setEmail(email);
         conta.setLogado(Logado.NAO);
 
         repositorio.save(conta);

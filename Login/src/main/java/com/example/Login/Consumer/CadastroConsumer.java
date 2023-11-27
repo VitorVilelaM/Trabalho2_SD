@@ -11,14 +11,11 @@ public class CadastroConsumer {
 
     @Autowired
     private RepositorioLogin repositorio;
-    @JmsListener(destination = "cadastro")
+    @JmsListener(destination = "cadastroLogin")
     public void listener(String cadastro){
-
         Login dataLogin = new Login();
 
         String[] data = cadastro.split(",");
-
-        System.out.println(data[3]);
 
         String email = data[3].replace(" email=","");
         email = email.replace("'", "");
